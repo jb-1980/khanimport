@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="report/khanimport/db" VERSION="2014080400" COMMENT="XMLDB file for Moodle report/khanimport"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="report_khanimport" COMMENT="Retrieve and update grades from Khan Academy">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id of related user record"/>
+        <FIELD NAME="oauthtoken" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="user oauth token"/>
+        <FIELD NAME="oauthsecret" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="user oauth secret"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="date token was fetched"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="uniquetoken" TYPE="unique" FIELDS="userid, oauthtoken, oauthsecret" COMMENT="ensure that user only has one token and secret"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
