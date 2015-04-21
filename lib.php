@@ -140,30 +140,33 @@ class khanacademy extends oauth_helper {
         return $content;
     }
     
-    function truncate_url($url,$params,$maxlength){
-        ksort($params);
-        $tmp_url = $url;
-        foreach($params as $param=>$value){
-            if(is_array($value)){
-                foreach($value as $v){
-                    $tmp_url.= (stripos($url, '?') !== false) ? '&' : '?';
-                    $tmp_url.= $param.'='.rawurlencode($v);
-                    if(strlen($tmp_url) > $maxlength){
-                        return $url;
-                    }
-                    $url = $tmp_url;
+    public function get_many_exercises($params){
+        $out = array();
+        $tmp = array('exercises'=>array(),'email'=>$params['email']);
+        $exer = True;
+        while($exer){
+            $s='';
+            $tmp['exercises'] = array();
+            foreach($params['exercises'] as $exercise){
+                $t=$s.'&exercises='.$exercise;
+                if(strlen($t)<500){
+                    $s.='&exercises='.$exercise;
+                    $tmp['exercises'][]=$exercise;
+                } else{
+                    break;
                 }
-            } else{
-                $tmp_url.= (stripos($url, '?') !== false) ? '&' : '?';
-                $tmp_url.= $param.'='.rawurlencode($value);
-                if(strlen($tmp_url) > $maxlength){
-                    return $url;
-                }
-                $url = $tmp_url;
+            }
+            $params['exercises'] = array_diff($params['exercises'],$tmp['exercises']);
+            $api_url = 'http://www.khanacademy.org/api/v1/user/exercises';
+            $request = json_decode($this->request('GET',$api_url,$tmp));
+            $out = array_merge($out,$request);
+            if(empty($params['exercises'])){
+                $exer = False;
             }
         }
+
+        return $out;
     }
-    
 }
 
 /**
@@ -187,3 +190,5 @@ function report_khanimport_sort_array_by_sortorder($item1, $item2) {
     }
     return ($item1->sortorder > $item2->sortorder) ? 1 : -1;
 }
+
+

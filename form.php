@@ -39,6 +39,11 @@ class report_khanimport_form extends moodleform {
         // Check if user has capability to upgrade/manage grades.
         $readonlygrades = !has_capability('moodle/grade:manage', $coursecontext);
 
+        // Allow to reset authenticated account
+        $updateurl = new moodle_url('/report/khanimport/index.php', array('id' => $COURSE->id,'update'=>1));
+        $link_text = get_string('changeauthenticateduser','report_khanimport');
+        $html = "<p style='text-align:center;'><a class='khanimport-button-link' href='{$updateurl}'>{$link_text}</a></p>";
+        $mform->addElement('html',$html);
         // Fetching Gradebook items.
         $gradeitems = grade_item::fetch_all(array('courseid' => $COURSE->id));
 

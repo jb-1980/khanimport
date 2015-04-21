@@ -16,13 +16,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * My Grades Block.
+ * Khan Import.
  *
- * @package   block_my_grades
- * @author    Karen Holland <kholland.dev@gmail.com>, Mei Jin, Jiajia Chen
+ * @package   report_khanimport
+ * @author    2015 Joseph Gilgen <gilgenlabs@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['changeauthenticateduser']='Change authenticated user';
+$string['consumerkey']='Consumer Key';
+$string['consumersecret']='Consumer Secret';
+$string['descconsumerkey']='The consumer key for the Khan API.';
+$string['descconsumersecret']='The consumer secret for the Khan API.';
+$string['headerconfig']='Khan Academy Import Settings';
+$string['descconfig'] = 'Set the consumer key and token for the Khan API. 
+                         You can register your app and receive the keys at
+                         <a href="https://www.khanacademy.org/api-apps/register" target="_blank">
+                         https://www.khanacademy.org/api-apps/register</a>.';
 $string['khanacademyitems']='Khan Academy Skills';
 $string['khanimport']='Khan Import';
 $string['pluginname']='Khan Import';
