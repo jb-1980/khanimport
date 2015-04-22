@@ -23,7 +23,7 @@ require_once(dirname(__FILE__) . '/lib.php');
 
 
 /**
- * The form for editing the activity duration settings throughout a course.
+ * The form for selecting the khan import options.
  *
  * @copyright 2014 Joseph Gilgen
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -83,9 +83,15 @@ class report_khanimport_form extends moodleform {
         $this->add_checkbox_controller(2);
         foreach($enroled_users as $enroled_user){
             if(user_has_role_assignment($enroled_user->id, $roleid, $contextid = $coursecontext->id)){
-                $mform->addElement('advcheckbox', "student[{$enroled_user->email}~{$enroled_user->id}]", $enroled_user->firstname.' '.$enroled_user->lastname, null, array('group' => 2));
+                $studentarray = array();
+                $studentarray[] =& $mform->createElement('advcheckbox', "checked", $enroled_user->firstname.' '.$enroled_user->lastname, null, array('group' => 2));
+                $studentarray[] =& $mform->createElement('text',"email",'',array('style'=>'size:20px;'));
+                $mform->addGroup($studentarray,"student[{$enroled_user->id}]",$enroled_user->firstname.' '.$enroled_user->lastname);
+                $mform->setType("student[{$enroled_user->id}][email]", PARAM_EMAIL);
+                $mform->setDefault("student[{$enroled_user->id}][email]", $enroled_user->email);
             }
         }
+        
         $this->add_action_buttons(True,get_string('submit','report_khanimport'));
         
     }

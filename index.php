@@ -32,6 +32,7 @@ $update = optional_param('update',0,PARAM_BOOL);
 $oauth_token = optional_param('oauth_token',null,PARAM_RAW);
 $oauth_token_secret = optional_param('oauth_token_secret',null,PARAM_RAW);
 $oauth_verifier = optional_param('oauth_verifier',null,PARAM_RAW);
+
 // Should be a valid course id.
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
@@ -44,6 +45,8 @@ $PAGE->set_pagelayout('admin');
 // Check permissions.
 $coursecontext = context_course::instance($course->id);
 require_capability('report/khanimport:view', $coursecontext);
+
+// Authenticate with Khan Academy's API
 $consumer_obj = get_config('khanimport');
 $args = array(
     'api_root'=>'http://www.khanacademy.org/',
@@ -94,6 +97,7 @@ if ($mform->is_cancelled()) {
     // Redirect to course view page if form is cancelled.
     redirect($returnurl);
 } else if ($data = $mform->get_data()) {
+    print_object($data);
     $params = array('exercises'=>array());
     // if skills have been selected, get data just for those skills,
     // else get data for all skills in KA
@@ -105,25 +109,23 @@ if ($mform->is_cancelled()) {
         }
     }
     foreach($data->student as $student=>$selected){
-        if($selected){
-            $student_info = explode('~',$student);
-            $params['email']=$student_info[0];
+        if($selected['checked']){
+            $params['email']=$selected['email'];
             $content = $khanacademy->get_many_exercises($params);
-            //$c = $khanacademy->request('GET',$api_url,$params);
-            //$content = json_decode($c);
         } else{
             continue;
         }
         
         $requester = json_decode($khanacademy->request('GET','http://www.khanacademy.org/api/v1/user'));
-        //print_object($requester);
-        //print_object($content);
+
         // If user doesn't have requester as coach, khan academy will return content
-        // of the requester. This prevents us from updating grades with bad info
+        // of the requester. This check prevents us from updating grades with bad info
         if($requester->key_email == $content[0]->user){
             $content = null;
             continue;
         }
+        
+        // Find the progress level for each skill, and update the grade in the gradebook
         foreach($content as $index=>$skillmodel){
             $exercise = $skillmodel->exercise;
             if(in_array($exercise,array_keys($data->skills))){
@@ -134,7 +136,7 @@ if ($mform->is_cancelled()) {
                   'mastery1'=>90,
                   'mastery2'=>95,
                   'mastery3'=>100)[$skill_level];
-                report_khanimport_update_grade($student_info[1], $finalgrade, $id, $exercise);
+                report_khanimport_update_grade($student, $finalgrade, $id, $exercise);
             }
         }
         $content = null;
