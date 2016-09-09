@@ -132,9 +132,9 @@ if ($mform->is_cancelled()) {
                 $skill_level = $skillmodel->exercise_progress->level;
                 $finalgrade = array(
                   'unstarted'=>false,
-                  'practiced'=>85,
-                  'mastery1'=>90,
-                  'mastery2'=>95,
+                  'practiced'=>70,
+                  'mastery1'=>80,
+                  'mastery2'=>90,
                   'mastery3'=>100)[$skill_level];
                 report_khanimport_update_grade($student, $finalgrade, $id, $exercise);
             }
